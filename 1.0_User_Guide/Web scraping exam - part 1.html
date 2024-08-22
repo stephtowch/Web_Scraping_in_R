@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Web Scraping and Data Management Exam 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Web scraping exam - part 1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Web scraping exam - part 1_files/libs/quarto-html/quarto.js"></script>
+<script src="Web scraping exam - part 1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Web scraping exam - part 1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Web scraping exam - part 1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Web scraping exam - part 1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Web scraping exam - part 1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Web scraping exam - part 1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Web scraping exam - part 1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Web scraping exam - part 1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Web Scraping and Data Management Exam 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction:</h2>
+<section id="objective" class="level3">
+<h3 class="anchored" data-anchor-id="objective">Objective:</h3>
+<p>This document provides a detailed guide for web scraping and cleaning course data from the Essex Summer School website. The R script extracts course titles, URLs and course descriptions from the website and processes the course descriptions to remove unwanted characters and whitespace.</p>
+</section>
+<section id="prerequisites" class="level3">
+<h3 class="anchored" data-anchor-id="prerequisites">Prerequisites:</h3>
+<section id="software-requirements" class="level4">
+<h4 class="anchored" data-anchor-id="software-requirements">Software Requirements</h4>
+<ul>
+<li><p>R version 4.4.1 or higher</p></li>
+<li><p>Required R packages <code>rvest</code>, <code>tidyverse</code>, <code>stringr</code>, <code>pacman</code> and <code>purrr</code>.</p></li>
+</ul>
+<p>To install the required packages, use the following command: <code>install.packages(c("rvest", "tidyverse", "stringr", "pacman", "purrr"))</code>.</p>
+</section>
+<section id="data-requirements" class="level4">
+<h4 class="anchored" data-anchor-id="data-requirements">Data Requirements</h4>
+<ul>
+<li>No specific data requirements, since this script directly scrapes the data from the URL below.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="procedure-steps" class="level2">
+<h2 class="anchored" data-anchor-id="procedure-steps">Procedure Steps:</h2>
+<section id="step-1-load-required-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-load-required-libraries">Step 1: Load Required Libraries</h3>
+<ul>
+<li><p>Use the <code>p_load</code> function from the <code>pacman</code> package to load multiple libraries simultaneously. This includes:</p>
+<ul>
+<li><p><code>rvest</code> for web scraping.</p></li>
+<li><p><code>tidyverse</code> for comprehensive data manipulation.</p></li>
+<li><p><code>stringr</code> for string operations.</p></li>
+<li><p><code>purrr</code> for functional programming tools.</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(rvest, tidyverse, stringr, purrr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-scrape-course-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-scrape-course-data">Step 2: Scrape Course Data</h3>
+<ul>
+<li>Read and extract the course titles and URLs from the Essex Summer School course list page:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># URL of the Essex Summer School courses page</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>main_url <span class="ot">&lt;-</span> <span class="st">"https://essexsummerschool.com/summer-school-facts/courses/ess-2024-course-list/"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the HTML content from the URL</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>main_page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(main_url)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract course titles and URLs</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>courses <span class="ot">&lt;-</span> main_page <span class="sc">|&gt;</span> <span class="fu">html_elements</span>(<span class="st">".article a"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>course_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Title =</span> courses <span class="sc">|&gt;</span> <span class="fu">html_text</span>(<span class="at">trim =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">URL =</span> courses <span class="sc">|&gt;</span> <span class="fu">html_attr</span>(<span class="st">"href"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li><p><strong>Assign the URL:</strong> Assign the URL of the Essex Summer School 2024 course list page to the object <code>main_url</code>. This URL will be used for web scraping the course information.</p></li>
+<li><p><strong>Fetch HTML Content:</strong> Use the <code>read_html</code> function from the <code>rvest</code> package to read the HTML content of the webpage stored in <code>main_url</code>. This function retrieves the web page’s content required for parsing and analysis. Store the result in the <code>main_page</code> object.</p></li>
+<li><p><strong>Select Course Elements:</strong> Use the <code>html_elements(".article a")</code> function to select all HTML elements that match the CSS selector <code>.article a</code>. This selector targets links (anchor tags <code>&lt;a&gt;</code>) within a section marked by the class <code>article</code>, which contains the course titles and their respective URLs.</p></li>
+<li><p><strong>Create a Structured Data Table:</strong> Construct a <code>tibble</code> called <code>course_data</code> to store the extracted information in a structured format:</p>
+<ul>
+<li><p><strong>Title Column:</strong> Populate this column by extracting the text content of the course links using the <code>html_text(trim = TRUE)</code> function. The <code>trim = TRUE</code> argument removes any leading or trailing whitespaces from the course titles.</p></li>
+<li><p><strong>URL Column:</strong> Populate this column by extracting the URLs from the <code>href</code> attributes of the anchor tags using the <code>html_attr("href")</code> function.</p></li>
+</ul></li>
+</ol>
+<p>This <code>tibble</code> provides a clean and organised structure for further analysis or processing of the course information.</p>
+</section>
+<section id="step-3-filter-unwanted-urls" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-filter-unwanted-urls">Step 3: Filter Unwanted URLs</h3>
+<ul>
+<li>Filter out the unwanted URLs</li>
+</ul>
+<ol type="1">
+<li><p><strong>Define Unwanted Patterns:</strong> Start by creating a vector of unwanted URL patterns using the <code>c()</code> function in Base R. Assign this vector to the object <code>unwanted_urls</code>. These patterns include email links (starting with <code>mailto:</code>) and a specific mailing list signup page URL.</p></li>
+<li><p><strong>Filter Out Unwanted URLs:</strong> Use the <code>filter</code>, <code>str_detect</code>, and <code>paste</code> functions to remove any rows from <code>course_data</code> where the URL matches the unwanted patterns.</p>
+<ul>
+<li><p><code>course_data |&gt;</code>: The pipe operator <code>|&gt;</code> directs the <code>course_data</code> tibble into the <code>filter()</code> function from the <code>tidyverse</code> package.</p></li>
+<li><p><code>str_detect(URL, ...)</code>: The <code>str_detect()</code> function from the <code>stringr</code> package checks each <code>URL</code> in <code>course_data</code> for a match against the unwanted patterns. It returns <code>TRUE</code> for matches and <code>FALSE</code> otherwise.</p></li>
+<li><p><code>paste(unwanted_urls, collapse = "|")</code>: The <code>paste()</code> function combines all patterns in the <code>unwanted_urls</code> vector into a single string, separated by the <code>|</code> character. This creates a regular expression that will match any URL containing either <code>"^mailto:"</code> or <code>"https://essexsummerschool.com/mailing-list-signup/"</code>.</p></li>
+<li><p><code>filter(!...)</code>: The <code>filter()</code> function retains rows where the condition within it is <code>TRUE</code>. By using the <code>!</code> operator, you negate the condition, so only rows where the <code>URL</code> does <strong>not</strong> match any of the unwanted patterns are kept.</p></li>
+</ul></li>
+<li><p><strong>Update <code>course_data</code>:</strong> The output is an updated <code>course_data</code> tibble that excludes any rows where the URL matches the patterns in <code>unwanted_urls</code>. This ensures that the dataset contains only valid course URLs, filtering out unwanted email links and the mailing list signup page.</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out mailto link and mailing list</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>unwanted_urls <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"^mailto:"</span>, <span class="st">"https://essexsummerschool.com/mailing-list-signup/"</span>) </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>course_data <span class="ot">&lt;-</span> course_data <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(URL, <span class="fu">paste</span>(unwanted_urls, <span class="at">collapse =</span> <span class="st">"|"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>^mailto:</code>: This is the regular expression pattern that matches any URL starting with <code>mailto:</code></li>
+<li><code>https://essexsummerschool.com/mailing-list-signup/</code>: This is a specific URL to exclude which is the mailing list signup page.</li>
+</ul>
+</section>
+<section id="step-4-extract-course-descriptions" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-extract-course-descriptions">Step 4: Extract Course Descriptions</h3>
+<ol type="1">
+<li><p><strong>Define the Extraction Function:</strong> Start by creating a function called <code>get_description()</code> that retrieves course descriptions from each URL in the <code>course_data</code> object.</p>
+<ul>
+<li><p><code>get_description(URL)</code>: This function takes a URL as its input and returns the course description from the corresponding web page.</p></li>
+<li><p><code>read_html(URL)</code>: This function from the <code>rvest</code> package reads and downloads the HTML content from the specified <code>URL</code>, making it ready for parsing and analysis.</p></li>
+<li><p><code>html_elements("#mds-course-description")|&gt;</code>: This function from the <code>rvest</code> package and selects and extracts all HTML elements from <code>course_page</code> that have the specified id. The |&gt; pipe operator passes the course_page object (which contains the HTML content of a webpage) into the html_elements() function.</p></li>
+<li><p><code>html_text(trim = TRUE)</code>: This function extracts the text content from the selected HTML elements and trims any leading or trailing whitespaces, ensuring clean text output.</p></li>
+<li><p><code>return(description)</code>: Finally, this function from <code>Base R</code> returns the extracted course description.</p></li>
+</ul></li>
+<li><p><strong>Apply the Function to <code>course_data</code>:</strong> Update the <code>course_data</code> tibble by adding a new column called <code>Description</code>, which stores the course descriptions extracted from each URL.</p>
+<ul>
+<li><p><code>mutate()</code> function: This function, from the <code>tidyverse</code> package, adds or modifies columns in a tibble. Here, it’s used to create a new <code>Description</code> column in <code>course_data</code>.</p></li>
+<li><p><code>map_chr(URL, get_description)</code>: The <code>map_chr()</code> function from the <code>purrr</code> package applies the <code>get_description()</code> function to each URL in the <code>course_data</code> tibble. It returns a character vector, which is appropriate for storing the course descriptions as text.</p></li>
+</ul></li>
+<li><p><strong>Final Output:</strong> The <code>course_data</code> tibble now has a <code>Description</code> column, where each row contains the course description fetched from its corresponding URL.</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to extract course descriptions from each URL</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>get_description <span class="ot">&lt;-</span> <span class="cf">function</span>(URL) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  course_page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(URL)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  description <span class="ot">&lt;-</span> course_page <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">"#mds-course-description"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text</span>(<span class="at">trim =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(description)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a column for descriptions by applying the get_description function</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>course_data <span class="ot">&lt;-</span> course_data <span class="sc">|&gt;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Description =</span> <span class="fu">map_chr</span>(URL, get_description))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p><code>#mds-course-description</code>: This CSS selector targets the element with the <code>id</code> <code>mds-course-description</code>, where the course description is located.</p></li>
+<li><p><code>map_chr()</code>: Efficiently applies the <code>get_description()</code> function to each URL and stores the resulting text in the <code>Description</code> column.</p></li>
+</ul>
+</section>
+<section id="step-5-clean-up-course-descriptions" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-clean-up-course-descriptions">Step 5: Clean Up Course Descriptions</h3>
+<ul>
+<li>Refine course descriptions by addressing encoding issues, replacing unwanted characters, and removing extra whitespace.</li>
+</ul>
+<ol type="1">
+<li><p><strong>Define the Cleaning Function:</strong> Define the <code>clean_description</code> function to process course descriptions. This function will:</p>
+<ul>
+<li><p><strong>Fix Encoding Issues:</strong> Convert text encoding to UTF-8.</p></li>
+<li><p><strong>Replace Unwanted Characters:</strong> Substitute incorrect or unwanted characters with the correct ones.</p></li>
+<li><p><strong>Remove Extra Whitespace:</strong> Trim and clean up extra spaces in the descriptions.</p></li>
+</ul></li>
+<li><p><strong>Apply the Cleaning Function:</strong> To clean course descriptions in the <code>course_data</code> tibble:</p>
+<ul>
+<li><strong>Mutate Operation:</strong> Use the <code>mutate()</code> function from the <code>tidyverse</code> package to apply <code>clean_description()</code> to the <code>Description</code> column.</li>
+</ul></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to clean up the description</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>clean_description <span class="ot">&lt;-</span> <span class="cf">function</span>(desc) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert encoding if needed (UTF-8 is standard)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  desc <span class="ot">&lt;-</span> <span class="fu">iconv</span>(desc, <span class="at">from =</span> <span class="st">"latin1"</span>, <span class="at">to =</span> <span class="st">"UTF-8"</span>, <span class="at">sub =</span> <span class="st">""</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replace unwanted characters</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  desc <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(desc, <span class="fu">c</span>(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"â€™"</span> <span class="ot">=</span> <span class="st">"’"</span>,    <span class="co"># Replace with the correct apostrophe</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"â€“"</span> <span class="ot">=</span> <span class="st">"-"</span>,    <span class="co"># Replace with the correct dash</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"â€œ"</span> <span class="ot">=</span> <span class="st">"“"</span>,    <span class="co"># Replace with the correct opening double quotation mark</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"â€"</span> <span class="ot">=</span> <span class="st">"”"</span>,     <span class="co"># Replace with the correct closing double quotation mark</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"â€˜"</span> <span class="ot">=</span> <span class="st">"‘"</span>,    <span class="co"># Replace with the correct opening single quotation mark</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"[*]"</span> <span class="ot">=</span> <span class="st">""</span>      <span class="co"># Remove asterisks</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove extra whitespace</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  desc <span class="ot">&lt;-</span> <span class="fu">str_squish</span>(desc)  <span class="co"># str_squish() from stringr handles multiple spaces and trims</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(desc)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the clean_description function to the Description column</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>course_data <span class="ot">&lt;-</span> course_data <span class="sc">%&gt;%</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Description =</span> <span class="fu">clean_description</span>(Description))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Function Breakdown:</strong></p>
+<ul>
+<li><p><code>iconv()</code>: Converts text encoding from <code>latin1</code> to <code>UTF-8</code>.</p>
+<ul>
+<li><p><code>from = "latin1"</code>: Specifies the source encoding.</p></li>
+<li><p><code>to = "UTF-8"</code>: Specifies the target encoding.</p></li>
+<li><p><code>sub = ""</code>: Replaces unconvertible characters with an empty string.</p></li>
+</ul></li>
+<li><p><code>str_replace_all()</code>: Replaces specified patterns in the text.</p>
+<ul>
+<li><p><code>"â€™"</code> is replaced with <code>’</code>.</p></li>
+<li><p><code>"â€“"</code> is replaced with <code>-</code>.</p></li>
+<li><p><code>"â€œ"</code> is replaced with <code>“</code>.</p></li>
+<li><p><code>"â€"</code> is replaced with <code>”</code>.</p></li>
+<li><p><code>"â€˜"</code> is replaced with <code>‘</code>.</p></li>
+<li><p><code>"[*]"</code> is removed.</p></li>
+</ul></li>
+<li><p><code>str_squish()</code>: Removes extra spaces and trims leading/trailing whitespace.</p></li>
+<li><p><code>mutate()</code>: Updates the <code>Description</code> column with cleaned data.</p></li>
+</ul>
+</section>
+<section id="step-6-view-and-save-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-6-view-and-save-the-data">Step 6: View and Save the Data</h3>
+<ul>
+<li>To view the cleaned data use the <code>View()</code> function and to save the tibble <code>course_data</code> to a <code>.csv</code> file, use the <code>write_csv()</code> function from the <code>tidyverse</code> package.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View the updated data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(course_data)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional: Save the data to a CSV file</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(course_data, <span class="st">"essex_summer_school_courses.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion:</h2>
+<p>This detailed guide provides instructions for web scraping and cleaning course data from the Essex Summer School website. This R script performs the following tasks: 1) Extraction: Retrieves course titles, URLs and descriptions from the website, and 2) Processing: Cleans course descriptions to remove unwanted characters and whitespace. The resulting cleaned data is available for review in the <code>course_data.csv</code> file.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
