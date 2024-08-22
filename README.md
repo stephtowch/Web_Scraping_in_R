@@ -11,7 +11,7 @@ This GitHub repository contains R code for web scraping course information on th
 
 The repository is organised into the following sections:
 
-- **[1.0 User Guide](/1.0_User_Guide_Web_Scraping_and_Data Management)**: This is a procedure guide for using the `rvest` package for web scraping, as well as `tidyverse`, `stringr` and `purrr` for some data wrangling.
+- **[1.0 User Guide](/1.0_User_Guide))**: This is a procedure guide for using the `rvest` package for web scraping, as well as `tidyverse`, `stringr` and `purrr` for some data wrangling.
 - **[2.0 Instruction Sheet](/2.0_Instruction_Sheet)**: This is the instruction sheet for the exam that details what to web scrap and report.
 - **[3.0 Data File](3.0_Data_File)**: This is the.csv output file to review course information at the Essex Summer School including the course names, URLs and descriptions.
 
